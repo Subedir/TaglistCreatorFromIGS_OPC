@@ -26,8 +26,10 @@ namespace TaglistCreatorFromIGS
     {
         //fields 
         private Excel.Application xlApp = null;
-        Dictionary<string, List<ParameterInfo>> csvDataTable = null;
-        private string fullPathToCSVDocument = "";
+        Dictionary<string, List<ParameterInfo>> csvIGSDataTable = null;
+        Dictionary<string, List<ParameterInfo>> csvOPCDataTable = null;
+        private string fullPathToIGSCSVDocument = "";
+        private string fullPathToOPCCSVDocument = "";
         private string excelFileName = ""; // this is used to name the excel file without the extension (.xlsx)
         private string excelFileFullPath = ""; // this is the full path with the excel file name
         Excel.Workbook xlWorkBook = null;
@@ -39,25 +41,33 @@ namespace TaglistCreatorFromIGS
          * Inputs: Entire file path of the csv file, ExcelFile name without extension
          * Logic: this initializes the object CreateTagListFromIGS while checking if the csv file actually exist. 
          */
-        public CreateTagListFromIGS_OPC(string FileFullPathName, string excelfile)
+        public CreateTagListFromIGS_OPC(string FileFullPathNameIGS, string FileFullPathNameOPC, string excelfile)
         {
-            fullPathToCSVDocument = FileFullPathName;
+            fullPathToIGSCSVDocument = FileFullPathNameIGS;
+            fullPathToOPCCSVDocument = FileFullPathNameOPC;
             excelFileName = excelfile;
             try
             {
-                if (!System.IO.File.Exists(fullPathToCSVDocument))
+                if (!System.IO.File.Exists(fullPathToIGSCSVDocument))
                 { 
-                    throw new System.IO.FileNotFoundException();
+                    throw new System.IO.FileNotFoundException("IGS file doesn't exist");
+                }
+                else if (!System.IO.File.Exists(fullPathToOPCCSVDocument))
+                {
+                    throw new System.IO.FileNotFoundException("OPC file doesn't exist");
+                    
                 }
 
             }
             catch (FileNotFoundException ex)
             {
-                MessageBox.Show("File Not Found Error, Please check if the IGS File exist", "Error");
+                MessageBox.Show(string.Format("File Not Found Error, {0}",ex.Message), "Error");
+                return;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error");
+                return;
             }
 
         }
@@ -71,12 +81,11 @@ namespace TaglistCreatorFromIGS
         {
             try
             { 
-            //this.excelFileName = Path.GetFileNameWithoutExtension(this.fullPathToCSVDocument);
+            //this.excelFileName = Path.GetFileNameWithoutExtension(this.fullPathToIGSCSVDocument);
 
-            string sourcePath = Path.GetDirectoryName(this.fullPathToCSVDocument); // this is directory of where the .csv file is located
+            string sourcePath = Path.GetDirectoryName(this.fullPathToIGSCSVDocument); // this is directory of where the .csv file is located
             excelFileFullPath = System.IO.Path.Combine(sourcePath, excelFileName + ".xlsx");
-
-
+    
             if (IsFileLocked(new FileInfo(excelFileFullPath)))
                 {
                     System.IO.File.WriteAllBytes(excelFileFullPath, Properties.Resources.StandardTagList);  // this is used to copy the excel file in this projects resources and create a copy in the folder where the csv is located
@@ -132,7 +141,7 @@ namespace TaglistCreatorFromIGS
             // this foreach loop is used to change the name of the worksheet to the name of the subcontrollers 
             //and create X number of excel worksheet based on how many unique subcontrollers there are. 
 
-            foreach (KeyValuePair<string, List<ParameterInfo>> entry in csvDataTable)
+            foreach (KeyValuePair<string, List<ParameterInfo>> entry in csvOPCDataTable)
             {
                 //Debug.WriteLine(entry.Key.ToString() +" " + xlWorkBook.Sheets.Count.ToString());
                 xlActiveSheet.Copy(Type.Missing, xlWorkBook.Sheets[xlWorkBook.Sheets.Count]);
@@ -290,7 +299,7 @@ namespace TaglistCreatorFromIGS
 
             }
 
-            }
+        }
 
 
         /*
@@ -334,62 +343,129 @@ namespace TaglistCreatorFromIGS
 
         private void readCSVFile()
         {
-
-            csvDataTable = new Dictionary<string, List<ParameterInfo>>();
-
-            // this string is used to add entries to the dictionary using this as a key. 
-            string currentSubControllerFile;
-            // these strings are used as intermediate holders to hold the current parameter information such as tag name, address, and data type
-            string currentTagName;
-            string currentAddress;
-            string currentDataType;
-
-            // create the data structure dictionary
-            using (TextFieldParser parser = new TextFieldParser(fullPathToCSVDocument))
+            try
             {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
 
-                //this single readfields will read in the header column from the CSV
-                string[] fields = parser.ReadFields();
-                //Debug.WriteLine(fields.Length);
+                csvIGSDataTable = new Dictionary<string, List<ParameterInfo>>();
+                csvOPCDataTable = new Dictionary<string, List<ParameterInfo>>();
 
-                string Tag_Name_Header = fields[0];
-                string Address_Header = fields[1];
-                string Data_Type_Header = fields[2];
+                // this string is used to add entries to the dictionary using this as a key. 
+                string currentSubControllerFile;
+                // these strings are used as intermediate holders to hold the current parameter information such as tag name, address, and data type
+                string currentTagName;
+                string currentAddress;
+                string currentDataType;
 
-                // this while loop is used to read the entire csv file into a list of type ParameterInfo type
-                while (!parser.EndOfData)
+                // create the data structure dictionary
+                using (TextFieldParser parser = new TextFieldParser(fullPathToIGSCSVDocument))
                 {
-                    fields = parser.ReadFields();
+                    parser.TextFieldType = FieldType.Delimited;
+                    parser.SetDelimiters(",");
 
-                    currentSubControllerFile = fields[0].Split('.')[0];
-                    currentTagName = fields[0].Split('.')[1];
-                    currentAddress = fields[1];
-                    currentDataType = fields[2];
+                    //this single readfields will read in the header column from the CSV
+                    string[] fields = parser.ReadFields();
+                    //Debug.WriteLine(fields.Length);
 
-
-                    // this checks to see if the key (SubController File) exist already exist in the dictionary
-                    if (csvDataTable.ContainsKey(currentSubControllerFile))
+                    string Tag_Name_Header = fields[0];
+                    string Address_Header = fields[1];
+                    string Data_Type_Header = fields[2];
+                    string fullIGSTagName;
+                    // this while loop is used to read the entire csv file into a list of type ParameterInfo type for the IGS file
+                    while (!parser.EndOfData)
                     {
-                        ParameterInfo currentParameterInfo = new ParameterInfo(currentTagName, currentAddress, currentDataType); // this create a new object with TagName, Address, DataType fields
-                        csvDataTable[currentSubControllerFile].Add(currentParameterInfo);
+                        fields = parser.ReadFields();
+
+                        fullIGSTagName = fields[0];
+
+                        currentSubControllerFile = fields[0].Split('.')[0];
+                        currentTagName = fields[0].Split('.')[1]; // this will be of the format "ROPlantSP.CityWaterTankSetpoints-HighLevelLock-out" which includes both the sub controller and the field name
+                        currentAddress = fields[1];
+                        currentDataType = fields[2];
+
+
+                        // this checks to see if the key (SubController File) exist already exist in the dictionary
+                        if (csvIGSDataTable.ContainsKey(fullIGSTagName))
+                        {
+                            ParameterInfo currentParameterInfo = new ParameterInfo(currentTagName, currentAddress, currentDataType); // this create a new object with TagName, Address, DataType fields
+                            csvIGSDataTable[fullIGSTagName].Add(currentParameterInfo);
+
+                        }
+
+                        else
+                        {
+                            List<ParameterInfo> newParameterList = new List<ParameterInfo>(); // this creates a new list to be added to the dictionary
+                            ParameterInfo currentParameterInfo = new ParameterInfo(currentTagName, currentAddress, currentDataType); // this create a new object with TagName, Address, DataType fields
+                            newParameterList.Add(currentParameterInfo); // this adds the ParamaterInfo Object called "currentParameterInfo" to the newly created list
+                            csvIGSDataTable.Add(fullIGSTagName, newParameterList);
+                        }
+
 
                     }
 
-                    else
-                    {
-                        List<ParameterInfo> newParameterList = new List<ParameterInfo>(); // this creates a new list to be added to the dictionary
-                        ParameterInfo currentParameterInfo = new ParameterInfo(currentTagName, currentAddress, currentDataType); // this create a new object with TagName, Address, DataType fields
-                        newParameterList.Add(currentParameterInfo); // this adds the ParamaterInfo Object called "currentParameterInfo" to the newly created list
-                        csvDataTable.Add(currentSubControllerFile, newParameterList);
-                    }
-
-                    
                 }
+                // this while loop is used to read the entire csv file into a list of type ParameterInfo type for the OPC file
+                using (TextFieldParser parser = new TextFieldParser(fullPathToOPCCSVDocument))
+                {
+                    parser.TextFieldType = FieldType.Delimited;
+                    parser.SetDelimiters(",");
 
+                    //this single readfields will read in the header column from the CSV
+                    string[] fields = parser.ReadFields();
+                    //Debug.WriteLine(fields.Length);
+
+                    string OPC_Item_Header = fields[0];
+                    //string Address_Header = fields[1];
+                    //string Data_Type_Header = fields[2];
+
+                    // this while loop is used to read the entire csv file into a list of type ParameterInfo type
+                    while (!parser.EndOfData)
+                    {
+                        fields = parser.ReadFields();
+
+
+                        string[] opcItemArray = fields[0].Split(','); // this takes a string like "Intellution.IntellutionGatewayOPCServer\Channel1.PLC.ROPlantSP.ClockSync-HMI/PLCHour" and splits it based on period to get a list [Intellution,IntellutionGatewayOPCServer\Channel1,PLC,ROPlantSP,ClockSync-HMI/PLCHour]
+                        currentSubControllerFile = opcItemArray[opcItemArray.Length - 2]; // this it to extract the second to last item which will represent the subcontroller string
+                        currentTagName = opcItemArray.Last();
+
+                        string subcontrollerAndTagName = string.Concat(currentSubControllerFile, '.', currentTagName); // this string is used to query the IGS dictionary generated from CSV
+
+                        // this if condition is used to check if the OPC entry exist in the IGS file. this catches the errors where the IGS and OPC files dont match
+                        if (!csvIGSDataTable.ContainsKey(subcontrollerAndTagName))
+                        {
+                            throw new Exception("ERROR!!! Please make sure the OPC and IGS files are for the same project");
+                        }
+                        else { 
+                        currentAddress = csvIGSDataTable[subcontrollerAndTagName][0].Address;
+                        currentDataType = csvIGSDataTable[subcontrollerAndTagName][0].Data_Type;
+                        }
+
+                        // this checks to see if the key (SubController File) exist already exist in the dictionary
+                        if (csvOPCDataTable.ContainsKey(currentSubControllerFile))
+                        {
+                            ParameterInfo currentParameterInfo = new ParameterInfo(currentTagName, currentAddress, currentDataType); // this create a new object with TagName, Address, DataType fields
+                            csvOPCDataTable[currentSubControllerFile].Add(currentParameterInfo);
+
+                        }
+
+                        else
+                        {
+                            List<ParameterInfo> newParameterList = new List<ParameterInfo>(); // this creates a new list to be added to the dictionary
+                            ParameterInfo currentParameterInfo = new ParameterInfo(currentTagName, currentAddress, currentDataType); // this create a new object with TagName, Address, DataType fields
+                            newParameterList.Add(currentParameterInfo); // this adds the ParamaterInfo Object called "currentParameterInfo" to the newly created list
+                            csvOPCDataTable.Add(currentSubControllerFile, newParameterList);
+                        }
+
+
+                    }
+
+                }
             }
-
+            catch (Exception ex)
+            {
+                saveCloseExcelFile();
+                MessageBox.Show(string.Format("Program exited with the following error: {0}", ex.Message.ToString()));
+                return;
+            }
         }
 
         /* method: generateTagList
@@ -406,7 +482,7 @@ namespace TaglistCreatorFromIGS
             createWorksheets();
 
             // this forloop loops throught all the enteries in the dictionary data structure to write them to the excel file
-            foreach (KeyValuePair<string, List<ParameterInfo>> entry in csvDataTable)
+            foreach (KeyValuePair<string, List<ParameterInfo>> entry in csvOPCDataTable)
             {
                 writeDataToExcelWorksheets(this.xlWorkBook, entry.Key, entry.Value);
             }
@@ -421,7 +497,7 @@ namespace TaglistCreatorFromIGS
             catch(Exception ex)
             {
                 saveCloseExcelFile();
-                MessageBox.Show(string.Format("Program exited with the following error: {0}", ex.ToString()));
+                MessageBox.Show(string.Format("Program exited with the following error: {0}", ex.Message.ToString()));
 
             }
         }
@@ -496,7 +572,7 @@ namespace TaglistCreatorFromIGS
 
 //---------------------------------------------------------------------------
 
-//fullPathToCSVDocument = @"C:\Users\212478881\Desktop\TestCSV Folder\011110TestSiteFullIGSDriver.csv";
+//fullPathToIGSCSVDocument = @"C:\Users\212478881\Desktop\TestCSV Folder\011110TestSiteFullIGSDriver.csv";
 
 
 //---------------------------------------------------------------------------

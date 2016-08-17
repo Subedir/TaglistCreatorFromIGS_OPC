@@ -86,7 +86,7 @@ namespace TaglistCreatorFromIGS
                 {
                     string CSVFileOnly = Path.GetFileName(openOPCFile.FileName);
                     OPCFileText.Text = CSVFileOnly;
-                    validOPCFile = CreateTagListFromIGS_OPC.checkIGSFile(openOPCFile.FileName);
+                    validOPCFile = CreateTagListFromIGS_OPC.checkOPCFile(openOPCFile.FileName);
 
                 }
                 catch (System.IO.FileNotFoundException fnfe)
@@ -118,19 +118,25 @@ namespace TaglistCreatorFromIGS
             }
 
 
-            if (resultIGS == System.Windows.Forms.DialogResult.OK && validIGSFile == true)
+            if (!(resultIGS == System.Windows.Forms.DialogResult.OK && validIGSFile == true))
             {
+                MessageBox.Show("Please Upload a correct IGS config (.csv) file");
+                return;
 
-            string excelFileName = txtAONumberBox.Text + txtSiteBox.Text + "TagList"; // this is the excel file name without the extensions
-            CreateTagListFromIGS_OPC obj = new CreateTagListFromIGS_OPC(openIGSFile.FileName, excelFileName);
-            obj.generateTagList(); // this generateTagList method is the only method that can be excuted from the createTagListFromIGS object
-                
+            }
+            else if(!(resultOPC == System.Windows.Forms.DialogResult.OK && validOPCFile == true))
+            {
+                MessageBox.Show("Please Upload a correct OPC config (.csv) file");
                 return;
             }
             else
             {
-                MessageBox.Show("Please Upload a correct IGS config (.csv) file");
+                string excelFileName = txtAONumberBox.Text + txtSiteBox.Text + "TagList"; // this is the excel file name without the extensions
+                CreateTagListFromIGS_OPC obj = new CreateTagListFromIGS_OPC(openIGSFile.FileName, openOPCFile.FileName, excelFileName);
+                obj.generateTagList(); // this generateTagList method is the only method that can be excuted from the createTagListFromIGS object
+
                 return;
+
             }
         }
 
