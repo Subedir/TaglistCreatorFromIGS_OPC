@@ -413,7 +413,7 @@ namespace TaglistCreatorFromIGS
             }
         }
 
-        // method: readIGSCSVFile
+        // method: readOPCCSVFile
         // Input: CSV file
         // Output: Creates a data structure of type dictionary where the keys are the subcontroller names and the values are list of ParameterInfo objects
         // Key: Sub Controller File name For example CMN, ZW1 
