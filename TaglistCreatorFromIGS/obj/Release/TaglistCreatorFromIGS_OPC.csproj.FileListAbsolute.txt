@@ -12,3 +12,4 @@ C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_O
 C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Release\TaglistCreatorFromIGS_OPC.csproj.GenerateResource.Cache
 C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Release\TaglistCreatorFromIGS.exe
 C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Release\TaglistCreatorFromIGS.pdb
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Release\TaglistCreatorFromIGS_OPC.csprojResolveAssemblyReference.cache

@@ -1,0 +1,15 @@
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\bin\Debug\TaglistCreatorFromIGS.exe.config
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Debug\TaglistCreatorFromIGS_OPC.csproj.ResolveComReference.cache
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Debug\TaglistCreatorFromIGS.exe
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Debug\TaglistCreatorFromIGS.pdb
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\bin\Debug\Resources\StandardTagList.xlsx
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\bin\Debug\TaglistCreatorFromIGS.exe
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\bin\Debug\TaglistCreatorFromIGS.pdb
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\bin\Debug\CsvHelper.dll
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\bin\Debug\CsvHelper.pdb
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\bin\Debug\CsvHelper.xml
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Debug\TaglistCreatorFromIGS.AboutBox.resources
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Debug\TaglistCreatorFromIGS.Form1.resources
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Debug\TaglistCreatorFromIGS.Properties.Resources.resources
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Debug\TaglistCreatorFromIGS_OPC.csproj.GenerateResource.Cache
+C:\Users\212478881\Documents\Visual Studio 2015\Projects\TaglistCreatorFromIGS_OPC\TaglistCreatorFromIGS\obj\Debug\TaglistCreatorFromIGS_OPC.csprojResolveAssemblyReference.cache

@@ -117,18 +117,38 @@ namespace TaglistCreatorFromIGS
                 return;
             }
 
-
-            if (!(resultIGS == System.Windows.Forms.DialogResult.OK && validIGSFile == true))
+            //Case 1: When no IGS file has been uploaded
+            if ((resultIGS != System.Windows.Forms.DialogResult.OK && validIGSFile == false))
             {
                 MessageBox.Show("Please Upload a correct IGS config (.csv) file");
                 return;
 
             }
-            else if(!(resultOPC == System.Windows.Forms.DialogResult.OK && validOPCFile == true))
+            // Case 2: When an incorrect IGS file has been uploaded
+            else if ((resultIGS == System.Windows.Forms.DialogResult.OK && validIGSFile == false))
             {
-                MessageBox.Show("Please Upload a correct OPC config (.csv) file");
+                MessageBox.Show("Please Re-Upload a correct IGS config (.csv) file");
+                return;
+
+            }
+            // Case 3: When an incorrect OPC file has been uploaded
+            else if((resultOPC == System.Windows.Forms.DialogResult.OK && validOPCFile == false))
+            {
+                MessageBox.Show("Please Re-Upload a correct OPC config (.csv) file");
                 return;
             }
+
+            // Case when no OPC file is uploaded, so program generated taglist based on just IGS file
+            else if ((resultOPC != System.Windows.Forms.DialogResult.OK && validOPCFile == false))
+            {
+                MessageBox.Show("TagList will be generated using only the IGS file as no OPC file was uploaded");
+                string excelFileName = txtAONumberBox.Text + txtSiteBox.Text + "TagList"; // this is the excel file name without the extensions
+                CreateTagListFromIGS_OPC obj = new CreateTagListFromIGS_OPC(openIGSFile.FileName, openOPCFile.FileName, excelFileName);
+                obj.generateTagList(); // this generateTagList method is the only method that can be excuted from the createTagListFromIGS object
+                return;
+            }
+
+
             else
             {
                 string excelFileName = txtAONumberBox.Text + txtSiteBox.Text + "TagList"; // this is the excel file name without the extensions
@@ -141,4 +161,8 @@ namespace TaglistCreatorFromIGS
         }
 
     }
+
+
+
+
 }
