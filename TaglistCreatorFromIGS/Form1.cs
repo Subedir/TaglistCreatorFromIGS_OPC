@@ -132,32 +132,62 @@ namespace TaglistCreatorFromIGS
 
             }
             // Case 3: When an incorrect OPC file has been uploaded
-            else if((resultOPC == System.Windows.Forms.DialogResult.OK && validOPCFile == false))
+            else if (( (resultOPC == System.Windows.Forms.DialogResult.OK) || (resultOPC == System.Windows.Forms.DialogResult.Cancel) ) && validOPCFile == false)
             {
                 MessageBox.Show("Please Re-Upload a correct OPC config (.csv) file");
                 return;
             }
 
             // Case when no OPC file is uploaded, so program generated taglist based on just IGS file
-            else if ((resultOPC != System.Windows.Forms.DialogResult.OK && validOPCFile == false))
+            else if (((resultOPC == System.Windows.Forms.DialogResult.None) && validOPCFile == false))
             {
                 MessageBox.Show("TagList will be generated using only the IGS file as no OPC file was uploaded");
                 string excelFileName = txtAONumberBox.Text + txtSiteBox.Text + "TagList"; // this is the excel file name without the extensions
-                CreateTagListFromIGS_OPC obj = new CreateTagListFromIGS_OPC(openIGSFile.FileName, openOPCFile.FileName, excelFileName);
-                obj.generateTagList(); // this generateTagList method is the only method that can be excuted from the createTagListFromIGS object
-                return;
+
+                saveFile.FileName = excelFileName;
+                saveFile.Filter = "Excel File (*.xlsx)|*.xlsx";
+                System.Windows.Forms.DialogResult result;
+                result = saveFile.ShowDialog();
+
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    try
+                    {
+                        CreateTagListFromIGS obj = new CreateTagListFromIGS(openIGSFile.FileName, openOPCFile.FileName, saveFile.FileName);
+                        obj.generateTagList(); // this generateTagList method is the only method that can be excuted from the createTagListFromIGS object
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An Error Occured\r\n\r\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
             }
-
-
             else
             {
                 string excelFileName = txtAONumberBox.Text + txtSiteBox.Text + "TagList"; // this is the excel file name without the extensions
-                CreateTagListFromIGS_OPC obj = new CreateTagListFromIGS_OPC(openIGSFile.FileName, openOPCFile.FileName, excelFileName);
-                obj.generateTagList(); // this generateTagList method is the only method that can be excuted from the createTagListFromIGS object
 
-                return;
+                saveFile.FileName = excelFileName;
+                saveFile.Filter = "Excel File (*.xlsx)|*.xlsx";
+                System.Windows.Forms.DialogResult result;
+                result = saveFile.ShowDialog();
 
-            }
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    try
+                    {
+                        CreateTagListFromIGS_OPC obj = new CreateTagListFromIGS_OPC(openIGSFile.FileName, openOPCFile.FileName, saveFile.FileName);
+                        obj.generateTagList(); // this generateTagList method is the only method that can be excuted from the createTagListFromIGS object
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An Error Occured\r\n\r\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+             }
         }
 
     }

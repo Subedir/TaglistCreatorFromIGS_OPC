@@ -49,6 +49,7 @@
             this.txtAONumberBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.openOPCFile = new System.Windows.Forms.OpenFileDialog();
+            this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.AboutStrip.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -305,6 +306,7 @@
         private System.Windows.Forms.Label OPCFileText;
         private System.Windows.Forms.Button UploadOPCFile;
         private System.Windows.Forms.OpenFileDialog openOPCFile;
+        private System.Windows.Forms.SaveFileDialog saveFile;
     }
 }
 
